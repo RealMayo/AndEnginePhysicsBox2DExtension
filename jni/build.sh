@@ -1,7 +1,7 @@
 #! /bin/sh
 
-NDK_DIRECTORY="/Users/ngramlich/SDKs/Android/ndk/r6b/"
-PROJECT_DIRECTORY="/Users/ngramlich/Workspace/gdk/graphic_engines/AndEngine/AndEnginePhysicsBox2DExtension/"
+NDK_DIRECTORY="~/android-ndk/"
+PROJECT_DIRECTORY="~/src/android/AndEngineExtensions/AndEnginePhysicsBox2DExtensionNew/"
 
 # Run build:
 cd ${PROJECT_DIRECTORY}

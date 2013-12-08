@@ -28,8 +28,9 @@ import com.badlogic.gdx.math.MathUtils;
  * depending on hash collisions. Load factors greater than 0.91 greatly increase the chances the map will have to rehash to the
  * next higher POT size.
  * @author Nathan Sweet */
+@SuppressWarnings("unchecked")
 public class LongMap<V> {
-	private static final int PRIME1 = 0xbe1f14b1;
+	//private static final int PRIME1 = 0xbe1f14b1;
 	private static final int PRIME2 = 0xb4b82e39;
 	private static final int PRIME3 = 0xced1c241;
 	private static final int EMPTY = 0;
@@ -47,9 +48,9 @@ public class LongMap<V> {
 	private int stashCapacity;
 	private int pushIterations;
 
-	private Entries entries;
-	private Values values;
-	private Keys keys;
+	private Entries<V> entries;
+	private Values<V> values;
+	private Keys<V> keys;
 
 	/** Creates a new map with an initial capacity of 32 and a load factor of 0.8. This map will hold 25 items before growing the
 	 * backing table. */
@@ -531,7 +532,7 @@ public class LongMap<V> {
 	 * time this method is called. Use the {@link Entries} constructor for nested or multithreaded iteration. */
 	public Entries<V> entries () {
 		if (entries == null)
-			entries = new Entries(this);
+			entries = new Entries<V>(this);
 		else
 			entries.reset();
 		return entries;
@@ -541,7 +542,7 @@ public class LongMap<V> {
 	 * time this method is called. Use the {@link Entries} constructor for nested or multithreaded iteration. */
 	public Values<V> values () {
 		if (values == null)
-			values = new Values(this);
+			values = new Values<V>(this);
 		else
 			values.reset();
 		return values;
@@ -549,9 +550,9 @@ public class LongMap<V> {
 
 	/** Returns an iterator for the keys in the map. Remove is supported. Note that the same iterator instance is returned each time
 	 * this method is called. Use the {@link Entries} constructor for nested or multithreaded iteration. */
-	public Keys keys () {
+	public Keys<V> keys () {
 		if (keys == null)
-			keys = new Keys(this);
+			keys = new Keys<V>(this);
 		else
 			keys.reset();
 		return keys;
@@ -618,9 +619,9 @@ public class LongMap<V> {
 	}
 
 	static public class Entries<V> extends MapIterator<V> implements Iterable<Entry<V>>, Iterator<Entry<V>> {
-		private Entry<V> entry = new Entry();
+		private Entry<V> entry = new Entry<V>();
 
-		public Entries (LongMap map) {
+		public Entries (LongMap<V> map) {
 			super(map);
 		}
 
@@ -675,15 +676,15 @@ public class LongMap<V> {
 
 		/** Returns a new array containing the remaining values. */
 		public Array<V> toArray () {
-			Array array = new Array(true, map.size);
+			Array<V> array = new Array<V>(true, map.size);
 			while (hasNext)
 				array.add(next());
 			return array;
 		}
 	}
 
-	static public class Keys extends MapIterator {
-		public Keys (LongMap map) {
+	static public class Keys<V> extends MapIterator<V> {
+		public Keys (LongMap<V> map) {
 			super(map);
 		}
 

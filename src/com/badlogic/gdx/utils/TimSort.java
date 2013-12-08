@@ -37,6 +37,7 @@ import java.util.Comparator;
  * While the API to this class consists solely of static methods, it is (privately) instantiable; a TimSort instance holds the
  * state of an ongoing sort, assuming the input array is large enough to warrant the full-blown TimSort. Small arrays are sorted
  * in place, using a binary insertion sort. */
+@SuppressWarnings("unchecked")
 class TimSort<T> {
 	/** This is the minimum sized sequence that will be merged. Shorter sequences will be lengthened by calling binarySort. If the
 	 * entire array is less than this length, no merges will be performed.
@@ -93,21 +94,21 @@ class TimSort<T> {
 		runLen = new int[40];
 	}
 
-	public void doSort (T[] a, Comparator<T> c, int lo, int hi) {
+	public void doSort (T[] items, Comparator<T> c2, int lo, int hi) {
 		stackSize = 0;
-		rangeCheck(a.length, lo, hi);
+		rangeCheck(items.length, lo, hi);
 		int nRemaining = hi - lo;
 		if (nRemaining < 2) return; // Arrays of size 0 and 1 are always sorted
 
 		// If array is small, do a "mini-TimSort" with no merges
 		if (nRemaining < MIN_MERGE) {
-			int initRunLen = countRunAndMakeAscending(a, lo, hi, c);
-			binarySort(a, lo, hi, lo + initRunLen, c);
+			int initRunLen = countRunAndMakeAscending(items, lo, hi, c2);
+			binarySort(items, lo, hi, lo + initRunLen, c2);
 			return;
 		}
 
-		this.a = a;
-		this.c = c;
+		this.a = items;
+		this.c = c2;
 		tmpCount = 0;
 
 		/** March over the array once, left to right, finding natural runs, extending short natural runs to minRun elements, and
@@ -115,12 +116,12 @@ class TimSort<T> {
 		int minRun = minRunLength(nRemaining);
 		do {
 			// Identify next run
-			int runLen = countRunAndMakeAscending(a, lo, hi, c);
+			int runLen = countRunAndMakeAscending(items, lo, hi, c2);
 
 			// If run is short, extend to min(minRun, nRemaining)
 			if (runLen < minRun) {
 				int force = nRemaining <= minRun ? nRemaining : minRun;
-				binarySort(a, lo, lo + force, lo + runLen, c);
+				binarySort(items, lo, lo + force, lo + runLen, c2);
 				runLen = force;
 			}
 

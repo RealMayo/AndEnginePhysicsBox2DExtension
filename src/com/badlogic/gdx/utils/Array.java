@@ -25,6 +25,7 @@ import java.util.NoSuchElementException;
 /** A resizable, ordered or unordered array of objects. If unordered, this class avoids a memory copy when removing elements (the
  * last element is moved to the removed element's position).
  * @author Nathan Sweet */
+@SuppressWarnings("unchecked")
 public class Array<T> implements Iterable<T> {
 	/** Provides direct access to the underlying array. If the Array's generic type is not Object, this field may only be accessed
 	 * if the {@link Array#Array(boolean, int, Class)} constructor was used. */
@@ -33,7 +34,7 @@ public class Array<T> implements Iterable<T> {
 	public int size;
 	public boolean ordered;
 
-	private ArrayIterator iterator;
+	private ArrayIterator<T> iterator;
 
 	/** Creates an ordered array with a capacity of 16. */
 	public Array () {
@@ -70,7 +71,7 @@ public class Array<T> implements Iterable<T> {
 	/** Creates a new array containing the elements in the specified array. The new array will have the same type of backing array
 	 * and will be ordered if the specified array is ordered. The capacity is set to the number of elements, so any subsequent
 	 * elements added will cause the backing array to be grown. */
-	public Array (Array array) {
+	public Array (Array<T> array) {
 		this(array.ordered, array.size, (Class<T>)array.items.getClass().getComponentType());
 		size = array.size;
 		System.arraycopy(array.items, 0, items, 0, size);
@@ -88,7 +89,7 @@ public class Array<T> implements Iterable<T> {
 	 * @param ordered If false, methods that remove elements may change the order of other elements in the array, which avoids a
 	 *           memory copy. */
 	public Array (boolean ordered, T[] array) {
-		this(ordered, array.length, (Class)array.getClass().getComponentType());
+		this(ordered, array.length, (Class<T>)array.getClass().getComponentType());
 		size = array.length;
 		System.arraycopy(array, 0, items, 0, size);
 	}
@@ -99,11 +100,11 @@ public class Array<T> implements Iterable<T> {
 		items[size++] = value;
 	}
 
-	public void addAll (Array array) {
+	public void addAll (Array<T> array) {
 		addAll(array, 0, array.size);
 	}
 
-	public void addAll (Array array, int offset, int length) {
+	public void addAll (Array<T> array, int offset, int length) {
 		if (offset + length > array.size)
 			throw new IllegalArgumentException("offset + length must be <= size: " + offset + " + " + length + " <= " + array.size);
 		addAll((T[])array.items, offset, length);
@@ -305,7 +306,7 @@ public class Array<T> implements Iterable<T> {
 	 * time this method is called. Use the {@link ArrayIterator} constructor for nested or multithreaded iteration. */
 	public Iterator<T> iterator () {
 		if (iterator == null)
-			iterator = new ArrayIterator(this);
+			iterator = new ArrayIterator<T>(this);
 		else
 			iterator.index = 0;
 		return iterator;
@@ -339,7 +340,7 @@ public class Array<T> implements Iterable<T> {
 	public boolean equals (Object object) {
 		if (object == this) return true;
 		if (!(object instanceof Array)) return false;
-		Array array = (Array)object;
+		Array<T> array = (Array<T>)object;
 		int n = size;
 		if (n != array.size) return false;
 		Object[] items1 = this.items;

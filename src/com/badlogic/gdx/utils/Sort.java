@@ -21,10 +21,11 @@ import java.util.Comparator;
  * Note that sorting primitive arrays with the Arrays.sort methods does not allocate memory (unless sorting large arrays of char,
  * short, or byte).
  * @author Nathan Sweet */
+@SuppressWarnings("unchecked")
 public class Sort {
 	static private Sort instance;
 
-	private TimSort timSort;
+	private TimSort<Object> timSort;
 	private ComparableTimSort comparableTimSort;
 
 	public <T> void sort (Array<T> a) {
@@ -43,18 +44,18 @@ public class Sort {
 	}
 
 	public <T> void sort (Array<T> a, Comparator<T> c) {
-		if (timSort == null) timSort = new TimSort();
-		timSort.doSort(a.items, c, 0, a.size);
+		if (timSort == null) timSort = new TimSort<Object>();
+		timSort.doSort(a.items, (Comparator<Object>) c, 0, a.size);
 	}
 
 	public <T> void sort (T[] a, Comparator<T> c) {
-		if (timSort == null) timSort = new TimSort();
-		timSort.doSort(a, c, 0, a.length);
+		if (timSort == null) timSort = new TimSort<Object>();
+		timSort.doSort(a, (Comparator<Object>) c, 0, a.length);
 	}
 
 	public <T> void sort (T[] a, Comparator<T> c, int fromIndex, int toIndex) {
-		if (timSort == null) timSort = new TimSort();
-		timSort.doSort(a, c, fromIndex, toIndex);
+		if (timSort == null) timSort = new TimSort<Object>();
+		timSort.doSort(a, (Comparator<Object>) c, fromIndex, toIndex);
 	}
 
 	/** Returns a Sort instance for convenience. Multiple threads must not use this instance at the same time. */
